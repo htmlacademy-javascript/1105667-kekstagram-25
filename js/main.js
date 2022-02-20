@@ -16,7 +16,7 @@ getRandomNumber(0,3);
 const MAX_COMMENT_LENGTH = 140;
 
 let checkLineLength = function (text, max) {
-  if  (text.length < max) {
+  if  (text.length <= max) {
     return true;
   }
 
