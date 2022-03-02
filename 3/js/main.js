@@ -49,45 +49,41 @@ function getRandomArrayElement (elements) {
   return elements[getRandomNumber(0, elements.length - 1)];
 }
 
-const COMMENT = [];
+const comments = [];
 
 function createComment () {
-  const COMMENT_RANGE_INDEX = []; // массив всех числе в заданном диапазоне
-  const COMMENT_INDEX = []; // массив случайных неповторяющихся 25 чисел из массива выше
+  const commentRangeIds = [ ...Array(10000).keys() ].map( (i) => i+1); // массив всех чисел в заданном диапазоне
+  const commentIds = []; // массив случайных неповторяющихся 25 чисел из массива выше
 
 
-  for (let i = 1; i <= 10000; i++) {
-    COMMENT_RANGE_INDEX.push(i);
+  for (let i = 0; i < 25; i++) {
+    commentIds[i] = commentRangeIds.splice(getRandomNumber(0, commentRangeIds.length - 1),1)[0];
   }
 
   for (let i = 0; i < 25; i++) {
-    COMMENT_INDEX[i] = COMMENT_RANGE_INDEX.splice(getRandomNumber(0, COMMENT_RANGE_INDEX.length - 1),1);
-  }
-
-  for (let i = 0; i < 25; i++) {
-    COMMENT[i] = {
-      id: Number(COMMENT_INDEX[i]),
+    comments[i] = {
+      id: commentIds[i],
       avatar: `img/avatar-${  getRandomNumber(1, 6)  }.svg`,
-      message: getRandomArrayElement (MESSAGES),
-      name: getRandomArrayElement (NAMES)
+      message: getRandomArrayElement(MESSAGES),
+      name: getRandomArrayElement(NAMES)
     };
   }
 }
 
 
-const PHOTO = [];
+const photoMocks = [];
 
 function createPhotoDescription () {
-  createComment ();
+  createComment();
   for (let i = 0; i < 25; i++ ) {
-    PHOTO[i] = {
+    photoMocks[i] = {
       id: i + 1 ,
       url: `photos/${  i + 1  }.jpg`,
       description: getRandomArrayElement(DESCRIPTIONS),
       likes: getRandomNumber(15, 200),
-      comments: COMMENT[i]
+      comments: comments[i]
     };
   }
 }
 
-createPhotoDescription ();
+createPhotoDescription();
