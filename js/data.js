@@ -63,7 +63,7 @@ function createPhotoDescription () {
   }
 }
 
-createPhotoDescription ();
+createPhotoDescription();
 
 function createPhotoMocks () {
   return photoMocks;
