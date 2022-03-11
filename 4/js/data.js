@@ -1,5 +1,5 @@
-import {getRandomNumber} from './get-random-number.js';
-import {getRandomArrayElement} from './get-random-array-element.js';
+import {getRandomNumber} from './util.js';
+import {getRandomArrayElement} from './util.js';
 
 const DESCRIPTIONS = [
   'Вау!',
@@ -70,5 +70,3 @@ function createPhotoMocks () {
 }
 
 export {createPhotoMocks};
-
-
