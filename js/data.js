@@ -38,12 +38,12 @@ function createComment () {
   }
 
   for (let i = 0; i < 25; i++) {
-    comments[i] = {
+    comments[i] = [{
       id: commentIds[i],
       avatar: `img/avatar-${  getRandomNumber(1, 6)  }.svg`,
       message: getRandomArrayElement(MESSAGES),
       name: getRandomArrayElement(NAMES)
-    };
+    }];
   }
 }
 
