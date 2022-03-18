@@ -1,5 +1,5 @@
 import {createPhotoMocks} from './data.js';
-import {addPictureClickHandler} from './addPictureClickHandler.js';
+import {openPopup} from './popup.js';
 
 const picturesSection = document.querySelector('.pictures');
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
@@ -20,5 +20,5 @@ picturesSection.appendChild(picturesSectionFragment);
 const pictures = document.querySelectorAll('.picture');
 
 for (let i = 0; i < pictures.length; i++) {
-  addPictureClickHandler(pictures[i], photoMocks[i]);
+  openPopup(pictures[i], photoMocks[i]);
 }

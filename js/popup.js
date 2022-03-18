@@ -1,8 +1,6 @@
-import {makeElement} from './makeElement.js';
-
 const bigPictureSection = document.querySelector('.big-picture');
 
-const addPictureClickHandler = function (picture, photoMock) {
+const openPopup = (picture, photoMock) => {
   picture.addEventListener('click', () => {
     bigPictureSection.classList.remove('hidden');
     bigPictureSection.querySelector('.big-picture__img').querySelector('img').src = photoMock.url;
@@ -14,44 +12,40 @@ const addPictureClickHandler = function (picture, photoMock) {
     document.body.classList.add('modal-open');
 
     // Вставка комментариев
+    const commentElement = bigPictureSection.querySelector('.social__comment');
     bigPictureSection.querySelector('.social__comments').textContent = '';
-    function createComment ({avatar, name, message}) {
-      const comment = makeElement('li', 'social__comment');
-      const commentImg = makeElement('img', 'social__picture');
+    const createComment = ({avatar, name, message}) => {
+      const comment = commentElement.cloneNode(true);
+      const commentImg = comment.querySelector('.social__picture');
       commentImg.src = avatar;
       commentImg.alt = name;
-      commentImg.width = 35;
-      commentImg.height = 35;
-
-      comment.appendChild(commentImg);
-      const commentText = makeElement('p', 'social__text', message);
-      comment.appendChild(commentText);
+      comment.querySelector('.social__text').textContent = message;
       return comment;
-    }
+    };
 
     for (let i = 0; i < photoMock.comments.length; i++) {
       const singleComment = createComment(photoMock.comments[i]);
       bigPictureSection.querySelector('.social__comments').appendChild(singleComment);
     }
 
-
     // Закрытие окна по кнопке
-    const closeButton = bigPictureSection.querySelector('.big-picture__cancel');
-    closeButton.addEventListener('click', () => {
+    const closePopup = () => {
       bigPictureSection.classList.add('hidden');
       document.body.classList.remove('modal-open');
-    });
+    };
 
-    // Закрытие окна по клавише
+    const closeButton = bigPictureSection.querySelector('.big-picture__cancel');
+
+    closeButton.addEventListener('click', closePopup);
+
     document.addEventListener('keydown', (evt) => {
       if (evt.key === 'Escape') {
-        bigPictureSection.classList.add('hidden');
-        document.body.classList.remove('modal-open');
+        closePopup();
       }
-
     });
+
 
   });
 };
 
-export {addPictureClickHandler};
+export {openPopup};
