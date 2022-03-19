@@ -1,4 +1,6 @@
 import {createPhotoMocks} from './data.js';
+import {openPopup} from './popup.js';
+
 const picturesSection = document.querySelector('.pictures');
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
@@ -14,3 +16,9 @@ photoMocks.forEach((picture) => {
 });
 
 picturesSection.appendChild(picturesSectionFragment);
+
+const pictures = document.querySelectorAll('.picture');
+
+for (let i = 0; i < pictures.length; i++) {
+  openPopup(pictures[i], photoMocks[i]);
+}

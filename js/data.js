@@ -28,7 +28,7 @@ const MESSAGES = [
 
 const comments = [];
 // Создание комментариев с одним комментарием
-// function createComment () {
+// const createComment = () => {
 //   const commentRangeIds = [ ...Array(10000).keys() ].map( (i) => i+1); // массив всех чисел в заданном диапазоне
 //   const commentIds = []; // массив случайных неповторяющихся 25 чисел из массива выше
 
@@ -45,11 +45,11 @@ const comments = [];
 //       name: getRandomArrayElement(NAMES)
 //     }];
 //   }
-// }
+// };
 
 
 // Создание комментариев с несколькими комментариями
-function createComment () {
+const createComment = () => {
   const commentRangeIds = [ ...Array(10000).keys() ].map( (i) => i+1); // массив всех чисел в заданном диапазоне
   const commentIds = []; // массив куда будем записывать случайные неповторяющиеся числа из массива выше
 
@@ -73,12 +73,12 @@ function createComment () {
   for (let i = 0; i <25; i++) {
     comments[i] = commentsBlock.splice(getRandomNumber(0, commentsBlock.length - 1),getRandomNumber(1,4));
   }
-}
+};
 
 
 const photoMocks = [];
 
-function createPhotoDescription () {
+const createPhotoDescription = () => {
   createComment();
   for (let i = 0; i < 25; i++ ) {
     photoMocks[i] = {
@@ -89,12 +89,10 @@ function createPhotoDescription () {
       comments: comments[i]
     };
   }
-}
+};
 
 createPhotoDescription();
 
-function createPhotoMocks () {
-  return photoMocks;
-}
+const createPhotoMocks = () => photoMocks;
 
 export {createPhotoMocks};
