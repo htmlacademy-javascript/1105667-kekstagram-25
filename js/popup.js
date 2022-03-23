@@ -1,3 +1,4 @@
+import {isEscapeKey} from './util.js';
 const bigPictureSection = document.querySelector('.big-picture');
 
 const openPopup = (picture, photoMock) => {
@@ -28,21 +29,27 @@ const openPopup = (picture, photoMock) => {
       bigPictureSection.querySelector('.social__comments').appendChild(singleComment);
     }
 
-    // Закрытие окна по кнопке
-    const closePopup = () => {
-      bigPictureSection.classList.add('hidden');
-      document.body.classList.remove('modal-open');
+    const closeButton = bigPictureSection.querySelector('.big-picture__cancel');
+
+    const onPopupEscKeydown = (evt) => {
+      if (isEscapeKey(evt)) {
+        closePopup();
+      }
     };
 
-    const closeButton = bigPictureSection.querySelector('.big-picture__cancel');
+    // Закрытие окна по кнопке
+    function closePopup () {
+      bigPictureSection.classList.add('hidden');
+      document.body.classList.remove('modal-open');
+      closeButton.removeEventListener('click', closePopup);
+      document.removeEventListener('keydown', onPopupEscKeydown);
+    }
+
 
     closeButton.addEventListener('click', closePopup);
 
-    document.addEventListener('keydown', (evt) => {
-      if (evt.key === 'Escape') {
-        closePopup();
-      }
-    });
+
+    document.addEventListener('keydown', onPopupEscKeydown);
 
 
   });
