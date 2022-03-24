@@ -1,9 +1,4 @@
-const MAX_COMMENT_LENGTH = 140;
-
-const checkLineLength = (text, max) => text.length <= max;
-
-checkLineLength('Текст', MAX_COMMENT_LENGTH);
-
+const checkLineLength = (text) => text.length <= 140;
 
 const getRandomNumber = (min, max) => {
   if (min >= 0 && max > min) {
@@ -18,4 +13,6 @@ const getRandomNumber = (min, max) => {
 
 const getRandomArrayElement = (elements) => elements[getRandomNumber(0, elements.length - 1)];
 
-export {checkLineLength, getRandomNumber, getRandomArrayElement};
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export {checkLineLength, getRandomNumber, getRandomArrayElement, isEscapeKey};
