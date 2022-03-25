@@ -1,4 +1,5 @@
-const checkLineLength = (text) => text.length <= 140;
+const MAX_COMMENT_LENGTH = 140;
+const checkLineLength = (text) => text.length <= MAX_COMMENT_LENGTH;
 
 const getRandomNumber = (min, max) => {
   if (min >= 0 && max > min) {
