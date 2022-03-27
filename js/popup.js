@@ -1,5 +1,16 @@
 import {isEscapeKey} from './util.js';
 const bigPictureSection = document.querySelector('.big-picture');
+const NUMBER_OF_COMMENTS_TO_LOAD = 5;
+
+const clearNumberOfCommentsLoaded = (totalCommentsElement) => {
+  bigPictureSection.querySelector('.social__comment-count').innerHTML = '';
+  bigPictureSection.querySelector('.social__comment-count').append(totalCommentsElement);
+  bigPictureSection.querySelector('.social__comment-count').append(' комментариев');
+};
+
+const updateNumberOfCommentsLoaded = (loadedCommentsElement) => {
+  bigPictureSection.querySelector('.social__comment-count').prepend(`${loadedCommentsElement } из `);
+};
 
 const openPopup = (picture, photoMock) => {
   picture.addEventListener('click', () => {
@@ -28,17 +39,11 @@ const openPopup = (picture, photoMock) => {
     }
 
     const allCommentsList = bigPictureSection.querySelectorAll('.social__comment');
-    const NUMBER_OF_COMMENTS_TO_LOAD = 5;
     const numberOfCommentsLoaded = bigPictureSection.querySelector('.comments-count');
 
-    const clearNumberOfCommentsLoaded = () => {
-      bigPictureSection.querySelector('.social__comment-count').innerHTML = '';
-      bigPictureSection.querySelector('.social__comment-count').append(numberOfCommentsLoaded);
-      bigPictureSection.querySelector('.social__comment-count').append(' комментариев');
-    };
 
-    clearNumberOfCommentsLoaded();
-    bigPictureSection.querySelector('.social__comment-count').prepend(`${NUMBER_OF_COMMENTS_TO_LOAD  } из `);
+    clearNumberOfCommentsLoaded(numberOfCommentsLoaded);
+    updateNumberOfCommentsLoaded(NUMBER_OF_COMMENTS_TO_LOAD);
 
 
     // Вычисляем число групп по N и остаток
@@ -54,8 +59,8 @@ const openPopup = (picture, photoMock) => {
           allCommentsList[i].classList.remove('hidden');
         }
 
-        clearNumberOfCommentsLoaded();
-        bigPictureSection.querySelector('.social__comment-count').prepend(`${k*NUMBER_OF_COMMENTS_TO_LOAD  } из `);
+        clearNumberOfCommentsLoaded(numberOfCommentsLoaded);
+        updateNumberOfCommentsLoaded(k*NUMBER_OF_COMMENTS_TO_LOAD);
 
         k += 1;
 
@@ -63,10 +68,10 @@ const openPopup = (picture, photoMock) => {
 
         for (let i = (k-1)*NUMBER_OF_COMMENTS_TO_LOAD; i < (k-1)*NUMBER_OF_COMMENTS_TO_LOAD + numberOfLastGroup; i++) {
           allCommentsList[i].classList.remove('hidden');
-
-          clearNumberOfCommentsLoaded();
-          bigPictureSection.querySelector('.social__comment-count').prepend(`${(k-1)*NUMBER_OF_COMMENTS_TO_LOAD + numberOfLastGroup   } из `);
         }
+        clearNumberOfCommentsLoaded(numberOfCommentsLoaded);
+        updateNumberOfCommentsLoaded((k-1)*NUMBER_OF_COMMENTS_TO_LOAD + numberOfLastGroup);
+        bigPictureSection.querySelector('.social__comments-loader').classList.add('hidden');
       }
     };
 
@@ -80,8 +85,9 @@ const openPopup = (picture, photoMock) => {
 
       bigPictureSection.querySelector('.social__comments-loader').addEventListener('click', addMoreComments);
     } else {
-      clearNumberOfCommentsLoaded();
-      bigPictureSection.querySelector('.social__comment-count').prepend(`${allCommentsList.length  } из `);
+      clearNumberOfCommentsLoaded(numberOfCommentsLoaded);
+      updateNumberOfCommentsLoaded(allCommentsList.length);
+      bigPictureSection.querySelector('.social__comments-loader').classList.add('hidden');
     }
 
     const closeButton = bigPictureSection.querySelector('.big-picture__cancel');
@@ -99,6 +105,7 @@ const openPopup = (picture, photoMock) => {
       closeButton.removeEventListener('click', closePopup);
       document.removeEventListener('keydown', onPopupEscKeydown);
       bigPictureSection.querySelector('.social__comments-loader').removeEventListener('click', addMoreComments);
+      bigPictureSection.querySelector('.social__comments-loader').classList.remove('hidden');
     }
 
 
