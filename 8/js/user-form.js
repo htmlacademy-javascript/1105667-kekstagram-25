@@ -12,11 +12,11 @@ const onUploadFormEscKeydown = (evt) => {
   }
 };
 
-const addEventListenerOnDocument = () => {
+const onInputFocusout = () => {
   document.addEventListener('keydown', onUploadFormEscKeydown);
 };
 
-const removeEventListeneronDocument = () => {
+const onInputFocusin = () => {
   document.removeEventListener('keydown', onUploadFormEscKeydown);
 };
 
@@ -27,11 +27,11 @@ const openUploadForm = () => {
   document.addEventListener('keydown', onUploadFormEscKeydown);
   uploadFormCloseElement.addEventListener('click', closeUploadForm);
 
-  hashtagsInput.addEventListener('focusin', removeEventListeneronDocument);
-  hashtagsInput.addEventListener('focusout', addEventListenerOnDocument);
+  hashtagsInput.addEventListener('focusin', onInputFocusin);
+  hashtagsInput.addEventListener('focusout', onInputFocusout);
 
-  descriptionInput.addEventListener('focusin', removeEventListeneronDocument);
-  descriptionInput.addEventListener('focusout', addEventListenerOnDocument);
+  descriptionInput.addEventListener('focusin', onInputFocusin);
+  descriptionInput.addEventListener('focusout', onInputFocusout);
 
 };
 
@@ -46,19 +46,26 @@ function closeUploadForm () {
   // Убираем обработчики
   document.removeEventListener('keydown', onUploadFormEscKeydown);
   uploadFormCloseElement.removeEventListener('click', closeUploadForm);
-  hashtagsInput.removeEventListener('focusin', removeEventListeneronDocument);
-  hashtagsInput.removeEventListener('focusout', addEventListenerOnDocument);
-  descriptionInput.removeEventListener('focusin', removeEventListeneronDocument);
-  descriptionInput.removeEventListener('focusout', addEventListenerOnDocument);
+  hashtagsInput.removeEventListener('focusin', onInputFocusin);
+  hashtagsInput.removeEventListener('focusout', onInputFocusout);
+  descriptionInput.removeEventListener('focusin', onInputFocusin);
+  descriptionInput.removeEventListener('focusout', onInputFocusout);
 }
 
 uploadFile.addEventListener('change', openUploadForm);
 
 
-const pristine = new Pristine(uploadForm);
+const pristine = new Pristine(uploadForm, {
+  classTo: 'text__item',
+  errorClass: 'text__item--invalid',
+  successClass: 'text__item--valid',
+  errorTextParent: 'text__item',
+  errorTextTag: 'p',
+  errorTextClass: 'text__error'
+},false);
 
-pristine.addValidator(descriptionInput, checkLineLength);
-pristine.addValidator(hashtagsInput, checkHashtags);
+pristine.addValidator(descriptionInput, checkLineLength,'- длина комментария не может составлять больше 140 символов;');
+pristine.addValidator(hashtagsInput, checkHashtags, getHashtagsErrorMessage);
 
 function checkHashtags () {
   if (hashtagsInput.value === '') {
@@ -88,6 +95,11 @@ function checkHashtagsQuantity (hashtags) {
 function checkHashtagsUniqueness (hashtags) {
   const uniqueHashtags = new Set(hashtags);
   return hashtags.length === uniqueHashtags.size;
+}
+
+function getHashtagsErrorMessage () {
+  return '<p>&mdash; хэш-тег начинается с символа # (решётка);</p><p>&mdash; строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.; </p><p>&mdash; хеш-тег не может состоять только из одной решётки;</p><p>&mdash; максимальная длина одного хэш-тега 20 символов, включая решётку;</p><p>&mdash; хэш-теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом;</p><p>&mdash; хэш-теги разделяются пробелами;</p><p>&mdash; один и тот же хэш-тег не может быть использован дважды;</p><p>&mdash; нельзя указать больше пяти хэш-тегов;</p>';
+
 }
 
 // Проверка на валидность с выводами в консоль
