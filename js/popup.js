@@ -1,5 +1,16 @@
 import {isEscapeKey} from './util.js';
 const bigPictureSection = document.querySelector('.big-picture');
+const NUMBER_OF_COMMENTS_TO_LOAD = 5;
+
+const clearNumberOfCommentsLoaded = (totalCommentsElement) => {
+  bigPictureSection.querySelector('.social__comment-count').innerHTML = '';
+  bigPictureSection.querySelector('.social__comment-count').append(totalCommentsElement);
+  bigPictureSection.querySelector('.social__comment-count').append(' комментариев');
+};
+
+const updateNumberOfCommentsLoaded = (loadedCommentsElement) => {
+  bigPictureSection.querySelector('.social__comment-count').prepend(`${loadedCommentsElement } из `);
+};
 
 const openPopup = (picture, photoMock) => {
   picture.addEventListener('click', () => {
@@ -8,8 +19,6 @@ const openPopup = (picture, photoMock) => {
     bigPictureSection.querySelector('.likes-count').textContent = photoMock.likes;
     bigPictureSection.querySelector('.comments-count').textContent = photoMock.comments.length;
     bigPictureSection.querySelector('.social__caption').textContent = photoMock.description;
-    bigPictureSection.querySelector('.social__comment-count').classList.add('hidden');
-    bigPictureSection.querySelector('.comments-loader').classList.add('hidden');
     document.body.classList.add('modal-open');
 
     // Вставка комментариев
@@ -29,6 +38,58 @@ const openPopup = (picture, photoMock) => {
       bigPictureSection.querySelector('.social__comments').appendChild(singleComment);
     }
 
+    const allCommentsList = bigPictureSection.querySelectorAll('.social__comment');
+    const numberOfCommentsLoaded = bigPictureSection.querySelector('.comments-count');
+
+
+    clearNumberOfCommentsLoaded(numberOfCommentsLoaded);
+    updateNumberOfCommentsLoaded(NUMBER_OF_COMMENTS_TO_LOAD);
+
+
+    // Вычисляем число групп по N и остаток
+
+    const numberOfGroupOfN = Math.floor(allCommentsList.length / NUMBER_OF_COMMENTS_TO_LOAD);
+    const numberOfLastGroup = allCommentsList.length % NUMBER_OF_COMMENTS_TO_LOAD;
+    let k = 2;
+
+
+    const addMoreComments = () => {
+      if (k <= numberOfGroupOfN) {
+        for (let i = (k-1)*NUMBER_OF_COMMENTS_TO_LOAD; i < k*NUMBER_OF_COMMENTS_TO_LOAD; i++) {
+          allCommentsList[i].classList.remove('hidden');
+        }
+
+        clearNumberOfCommentsLoaded(numberOfCommentsLoaded);
+        updateNumberOfCommentsLoaded(k*NUMBER_OF_COMMENTS_TO_LOAD);
+
+        k += 1;
+
+      } else {
+
+        for (let i = (k-1)*NUMBER_OF_COMMENTS_TO_LOAD; i < (k-1)*NUMBER_OF_COMMENTS_TO_LOAD + numberOfLastGroup; i++) {
+          allCommentsList[i].classList.remove('hidden');
+        }
+        clearNumberOfCommentsLoaded(numberOfCommentsLoaded);
+        updateNumberOfCommentsLoaded((k-1)*NUMBER_OF_COMMENTS_TO_LOAD + numberOfLastGroup);
+        bigPictureSection.querySelector('.social__comments-loader').classList.add('hidden');
+      }
+    };
+
+
+    if (allCommentsList.length >= NUMBER_OF_COMMENTS_TO_LOAD) {
+
+      // Скрываем комментарии начиная с Nго
+      for (let i = NUMBER_OF_COMMENTS_TO_LOAD; i < allCommentsList.length; i++) {
+        allCommentsList[i].classList.add('hidden');
+      }
+
+      bigPictureSection.querySelector('.social__comments-loader').addEventListener('click', addMoreComments);
+    } else {
+      clearNumberOfCommentsLoaded(numberOfCommentsLoaded);
+      updateNumberOfCommentsLoaded(allCommentsList.length);
+      bigPictureSection.querySelector('.social__comments-loader').classList.add('hidden');
+    }
+
     const closeButton = bigPictureSection.querySelector('.big-picture__cancel');
 
     const onPopupEscKeydown = (evt) => {
@@ -43,6 +104,8 @@ const openPopup = (picture, photoMock) => {
       document.body.classList.remove('modal-open');
       closeButton.removeEventListener('click', closePopup);
       document.removeEventListener('keydown', onPopupEscKeydown);
+      bigPictureSection.querySelector('.social__comments-loader').removeEventListener('click', addMoreComments);
+      bigPictureSection.querySelector('.social__comments-loader').classList.remove('hidden');
     }
 
 

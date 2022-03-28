@@ -54,12 +54,12 @@ const createComment = () => {
   const commentIds = []; // массив куда будем записывать случайные неповторяющиеся числа из массива выше
 
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 750; i++) {
     commentIds[i] = commentRangeIds.splice(getRandomNumber(0, commentRangeIds.length - 1),1)[0];
   }
   // Создаем библиотеку случайных комментариев
   const commentsBlock = [];
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 750; i++) {
     commentsBlock[i] = {
       id: commentIds[i],
       avatar: `img/avatar-${  getRandomNumber(1, 6)  }.svg`,
@@ -71,7 +71,7 @@ const createComment = () => {
 
   // Создаем 25 блоков комментариев из нескольких комментариев
   for (let i = 0; i <25; i++) {
-    comments[i] = commentsBlock.splice(getRandomNumber(0, commentsBlock.length - 1),getRandomNumber(1,4));
+    comments[i] = commentsBlock.splice(getRandomNumber(0, commentsBlock.length - 1),getRandomNumber(1,30));
   }
 };
 
