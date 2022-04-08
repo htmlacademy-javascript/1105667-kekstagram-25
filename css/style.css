@@ -1416,3 +1416,8 @@ main {
 .hidden {
   display: none;
 }
+
+.text__error {
+  text-align: left;
+  text-transform: none;
+}
