@@ -30,6 +30,8 @@ const openUploadForm = () => {
   document.querySelector('.img-upload__overlay').classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.querySelector('.effect-level__slider').classList.add('hidden');
+  // Сброс стилей
+  document.querySelector('.img-upload__preview').querySelector('img').removeAttribute('style');
   // Масштаб изображения по умолчанию
   scaleControl.value = '100%';
   // Добавляем обработчики
