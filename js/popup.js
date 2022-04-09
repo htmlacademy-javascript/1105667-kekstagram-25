@@ -2,13 +2,10 @@ import {isEscapeKey} from './util.js';
 const bigPictureSection = document.querySelector('.big-picture');
 const NUMBER_OF_COMMENTS_TO_LOAD = 5;
 
-const clearNumberOfCommentsLoaded = (totalCommentsElement) => {
+const updateNumberOfCommentsLoaded = (totalCommentsElement, loadedCommentsElement) => {
   bigPictureSection.querySelector('.social__comment-count').innerHTML = '';
   bigPictureSection.querySelector('.social__comment-count').append(totalCommentsElement);
   bigPictureSection.querySelector('.social__comment-count').append(' комментариев');
-};
-
-const updateNumberOfCommentsLoaded = (loadedCommentsElement) => {
   bigPictureSection.querySelector('.social__comment-count').prepend(`${loadedCommentsElement } из `);
 };
 
@@ -42,8 +39,7 @@ const openPopup = (picture, photoMock) => {
     const numberOfCommentsLoaded = bigPictureSection.querySelector('.comments-count');
 
 
-    clearNumberOfCommentsLoaded(numberOfCommentsLoaded);
-    updateNumberOfCommentsLoaded(NUMBER_OF_COMMENTS_TO_LOAD);
+    updateNumberOfCommentsLoaded(numberOfCommentsLoaded, NUMBER_OF_COMMENTS_TO_LOAD);
 
 
     // Вычисляем число групп по N и остаток
@@ -59,8 +55,8 @@ const openPopup = (picture, photoMock) => {
           allCommentsList[i].classList.remove('hidden');
         }
 
-        clearNumberOfCommentsLoaded(numberOfCommentsLoaded);
-        updateNumberOfCommentsLoaded(k*NUMBER_OF_COMMENTS_TO_LOAD);
+        updateNumberOfCommentsLoaded(numberOfCommentsLoaded, k*NUMBER_OF_COMMENTS_TO_LOAD);
+
 
         k += 1;
 
@@ -69,8 +65,8 @@ const openPopup = (picture, photoMock) => {
         for (let i = (k-1)*NUMBER_OF_COMMENTS_TO_LOAD; i < (k-1)*NUMBER_OF_COMMENTS_TO_LOAD + numberOfLastGroup; i++) {
           allCommentsList[i].classList.remove('hidden');
         }
-        clearNumberOfCommentsLoaded(numberOfCommentsLoaded);
-        updateNumberOfCommentsLoaded((k-1)*NUMBER_OF_COMMENTS_TO_LOAD + numberOfLastGroup);
+        updateNumberOfCommentsLoaded(numberOfCommentsLoaded, (k-1)*NUMBER_OF_COMMENTS_TO_LOAD + numberOfLastGroup);
+
         bigPictureSection.querySelector('.social__comments-loader').classList.add('hidden');
       }
     };
@@ -85,8 +81,8 @@ const openPopup = (picture, photoMock) => {
 
       bigPictureSection.querySelector('.social__comments-loader').addEventListener('click', addMoreComments);
     } else {
-      clearNumberOfCommentsLoaded(numberOfCommentsLoaded);
-      updateNumberOfCommentsLoaded(allCommentsList.length);
+      updateNumberOfCommentsLoaded(numberOfCommentsLoaded, allCommentsList.length);
+
       bigPictureSection.querySelector('.social__comments-loader').classList.add('hidden');
     }
 
