@@ -57,6 +57,10 @@ const openPopup = (picture, photoMock) => {
 
         updateNumberOfCommentsLoaded(numberOfCommentsLoaded, k*NUMBER_OF_COMMENTS_TO_LOAD);
 
+        if (k === numberOfGroupOfN && numberOfLastGroup === 0 ) {
+          bigPictureSection.querySelector('.social__comments-loader').classList.add('hidden');
+        }
+
 
         k += 1;
 

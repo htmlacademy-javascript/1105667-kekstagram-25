@@ -103,21 +103,27 @@ sliderElement.noUiSlider.on('update', () => {
   const selectedEffect = document.querySelector('input[name="effect"]:checked').value;
   if (selectedEffect === 'chrome') {
     picturePreview.style.filter = `grayscale(${  valueElement.value })`;
+    picturePreview.className = 'effects__preview--chrome';
   }
   if (selectedEffect === 'sepia') {
     picturePreview.style.filter = `sepia(${  valueElement.value })`;
+    picturePreview.className = 'effects__preview--sepia';
   }
   if (selectedEffect === 'marvin') {
     picturePreview.style.filter = `invert(${  valueElement.value }%)`;
+    picturePreview.className = 'effects__preview--marvin';
   }
   if (selectedEffect === 'phobos') {
     picturePreview.style.filter = `blur(${  valueElement.value }px)`;
+    picturePreview.className = 'effects__preview--phobos';
   }
   if (selectedEffect === 'heat') {
     picturePreview.style.filter = `brightness(${  valueElement.value })`;
+    picturePreview.className = 'effects__preview--heat';
   }
   if (selectedEffect === 'none') {
     picturePreview.style.filter = 'none';
+    picturePreview.removeAttribute('class');
   }
 });
 

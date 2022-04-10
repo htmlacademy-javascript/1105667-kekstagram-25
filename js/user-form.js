@@ -1,5 +1,6 @@
 import {isEscapeKey, checkLineLength} from './util.js';
 import './slider.js';
+import {sendData} from './api.js';
 const uploadForm = document.querySelector('#upload-select-image');
 const uploadFile = uploadForm.querySelector('#upload-file');
 const uploadFormCloseElement = uploadForm.querySelector('#upload-cancel');
@@ -10,10 +11,11 @@ const descriptionInput = uploadForm.querySelector('[name="description"]');
 const scaleSmaller = document.querySelector('.scale__control--smaller');
 const scaleBigger = document.querySelector('.scale__control--bigger');
 const scaleControl = document.querySelector('.scale__control--value');
+const submitButton = document.querySelector('.img-upload__submit');
 
 
 const onUploadFormEscKeydown = (evt) => {
-  if (isEscapeKey(evt)) {
+  if ((isEscapeKey(evt) && !document.querySelector('.error')) || (isEscapeKey(evt) && document.querySelector('.error.hidden'))) {
     closeUploadForm();
   }
 };
@@ -32,6 +34,7 @@ const openUploadForm = () => {
   document.querySelector('.effect-level__slider').classList.add('hidden');
   // Сброс стилей
   document.querySelector('.img-upload__preview').querySelector('img').removeAttribute('style');
+  document.querySelector('.img-upload__preview').querySelector('img').removeAttribute('class');
   // Масштаб изображения по умолчанию
   scaleControl.value = '100%';
   // Добавляем обработчики
@@ -137,22 +140,42 @@ function getHashtagsErrorMessage () {
 
 }
 
-// Проверка на валидность с выводами в консоль
-// uploadForm.addEventListener('submit', (evt) => {
-//   evt.preventDefault();
+// Блокировка и разблокировка кнопки
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.textContent = 'Публикую...';
+};
 
-//   const isValid = pristine.validate();
-//   if (isValid) {
-//     console.log('Можно отправлять');
-//   } else {
-//     console.log('Форма невалидна');
-//   }
-// });
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.textContent = 'Опубликовать';
+};
 
 // Проверка на валидность с отменой отправки
-uploadForm.addEventListener('submit', (evt) => {
-  const isValid = pristine.validate();
-  if (!isValid) {
+
+const setUserFormSubmit = (onSuccess) => {
+  uploadForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-  }
-});
+
+    const isValid = pristine.validate();
+    if (isValid) {
+      blockSubmitButton();
+      sendData(
+        () => {
+          onSuccess();
+          unblockSubmitButton();
+        },
+        () => {
+          unblockSubmitButton();
+          // document.querySelector('.img-upload__overlay').classList.add('hidden');
+        },
+        new FormData(evt.target),
+      );
+    }
+    if (!isValid) {
+      evt.preventDefault();
+    }
+  });
+};
+
+export {closeUploadForm, setUserFormSubmit};
