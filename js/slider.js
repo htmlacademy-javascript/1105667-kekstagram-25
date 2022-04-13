@@ -127,3 +127,5 @@ sliderElement.noUiSlider.on('update', () => {
   }
 });
 
+export {filterElements, updateEffectSlider};
+

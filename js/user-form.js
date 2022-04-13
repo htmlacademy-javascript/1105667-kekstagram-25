@@ -1,6 +1,7 @@
 import {isEscapeKey, checkLineLength} from './util.js';
 import './slider.js';
 import {sendData} from './api.js';
+import {filterElements, updateEffectSlider} from './slider.js';
 const uploadForm = document.querySelector('#upload-select-image');
 const uploadFile = uploadForm.querySelector('#upload-file');
 const uploadFormCloseElement = uploadForm.querySelector('#upload-cancel');
@@ -12,7 +13,8 @@ const scaleSmaller = document.querySelector('.scale__control--smaller');
 const scaleBigger = document.querySelector('.scale__control--bigger');
 const scaleControl = document.querySelector('.scale__control--value');
 const submitButton = document.querySelector('.img-upload__submit');
-
+const picturePreview = document.querySelector('.img-upload__preview').querySelector('img');
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
 const onUploadFormEscKeydown = (evt) => {
   if ((isEscapeKey(evt) && !document.querySelector('.error')) || (isEscapeKey(evt) && document.querySelector('.error.hidden'))) {
@@ -32,9 +34,19 @@ const openUploadForm = () => {
   document.querySelector('.img-upload__overlay').classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.querySelector('.effect-level__slider').classList.add('hidden');
+
+  // Замена изображения
+  const file = uploadFile.files[0];
+  const fileName = file.name.toLowerCase();
+
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+  if (matches) {
+    picturePreview.src = URL.createObjectURL(file);
+  }
   // Сброс стилей
-  document.querySelector('.img-upload__preview').querySelector('img').removeAttribute('style');
-  document.querySelector('.img-upload__preview').querySelector('img').removeAttribute('class');
+  picturePreview.removeAttribute('style');
+  picturePreview.removeAttribute('class');
   // Масштаб изображения по умолчанию
   scaleControl.value = '100%';
   // Добавляем обработчики
@@ -66,11 +78,12 @@ function closeUploadForm () {
   hashtagsInput.removeEventListener('focusout', onInputFocusout);
   descriptionInput.removeEventListener('focusin', onInputFocusin);
   descriptionInput.removeEventListener('focusout', onInputFocusout);
+  filterElements.removeEventListener('click', updateEffectSlider);
   // Убираем обработчики с кнопок масштаба
   scaleSmaller.removeEventListener('click', makeScaleSmaller);
   scaleBigger.removeEventListener('click', makeScaleBigger);
   // Сброс стиля изображения
-  document.querySelector('.img-upload__preview').querySelector('img').style.transform = '';
+  picturePreview.style.transform = '';
 
 
 }
@@ -81,14 +94,14 @@ uploadFile.addEventListener('change', openUploadForm);
 function makeScaleSmaller () {
   if (scaleControl.value !== '25%') {
     scaleControl.value = `${Number(scaleControl.value.slice(0,-1)) - 25  }%`;
-    document.querySelector('.img-upload__preview').querySelector('img').style.transform = `scale(${ scaleControl.value.slice(0,-1)/100})`;
+    picturePreview.style.transform = `scale(${ scaleControl.value.slice(0,-1)/100})`;
   }
 }
 
 function makeScaleBigger () {
   if (scaleControl.value !== '100%') {
     scaleControl.value = `${Number(scaleControl.value.slice(0,-1)) + 25  }%`;
-    document.querySelector('.img-upload__preview').querySelector('img').style.transform = `scale(${ scaleControl.value.slice(0,-1)/100})`;
+    picturePreview.style.transform = `scale(${ scaleControl.value.slice(0,-1)/100})`;
   }
 }
 

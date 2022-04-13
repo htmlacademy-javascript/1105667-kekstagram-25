@@ -47,6 +47,8 @@ const body = document.body;
 
 const succesElement = succesTemplate.cloneNode(true);
 const successButton = succesElement.querySelector('.success__button');
+const errorElement = errorTemplate.cloneNode(true);
+const errorButton = errorElement.querySelector('.error__button');
 
 const onSuccessMessageEscKeydown = (evt) => {
   if (isEscapeKey(evt)) {
@@ -56,28 +58,21 @@ const onSuccessMessageEscKeydown = (evt) => {
   }
 };
 
-const closeSuccessMessage = function () {
-  succesElement.classList.add('hidden');
-  successButton.removeEventListener('click', closeSuccessMessage);
-};
-
-const onSuccessMessageClickOnRandomArea = function (evt) {
+const onSuccessMessageClickOnRandomArea = (evt) => {
   if (evt.target.className === 'success') {
     succesElement.classList.add('hidden');
   }
 };
 
-const createSuccessMessage = function () {
+const createSuccessMessage = () => {
   body.appendChild(succesElement);
 
   succesElement.classList.remove('hidden');
-  successButton.addEventListener('click', closeSuccessMessage);
+  successButton.addEventListener('click', closeMessage);
   document.addEventListener('keydown', onSuccessMessageEscKeydown);
   document.addEventListener('click', onSuccessMessageClickOnRandomArea);
 };
 
-const errorElement = errorTemplate.cloneNode(true);
-const errorButton = errorElement.querySelector('.error__button');
 
 const onErrorMessageEscKeydown = (evt) => {
   if (isEscapeKey(evt)) {
@@ -86,32 +81,38 @@ const onErrorMessageEscKeydown = (evt) => {
   }
 };
 
-const onErrorMessageClickOnRandomArea = function (evt) {
+const onErrorMessageClickOnRandomArea = (evt) => {
   if (evt.target.className === 'error') {
     errorElement.classList.add('hidden');
   }
   document.removeEventListener('click', onErrorMessageClickOnRandomArea);
 };
 
-const closeErrorMessage = function () {
-  errorElement.classList.add('hidden');
-  errorButton.removeEventListener('click', closeErrorMessage);
-};
-
-const createErrorMessage = function () {
+const createErrorMessage = () => {
   body.appendChild(errorElement);
 
   errorElement.classList.remove('hidden');
   errorElement.style.zIndex = '3';
-  errorButton.addEventListener('click', closeErrorMessage);
+  errorButton.addEventListener('click', closeMessage);
   document.addEventListener('keydown', onErrorMessageEscKeydown);
   document.addEventListener('click', onErrorMessageClickOnRandomArea);
 };
 
+function closeMessage () {
+  succesElement.classList.add('hidden');
+  successButton.removeEventListener('click', closeMessage);
+  errorElement.classList.add('hidden');
+  errorButton.removeEventListener('click', closeMessage);
+  document.removeEventListener('keydown', onSuccessMessageEscKeydown);
+  document.removeEventListener('click', onSuccessMessageClickOnRandomArea);
+  document.removeEventListener('keydown', onErrorMessageEscKeydown);
+  document.removeEventListener('click', onErrorMessageClickOnRandomArea);
+}
+
 // Функция взята из интернета и доработана
 // Источник - https://www.freecodecamp.org/news/javascript-debounce-example
 
-function debounce (callback, timeoutDelay = 500) {
+const debounce = (callback, timeoutDelay = 500) => {
   // Используем замыкания, чтобы id таймаута у нас навсегда приклеился
   // к возвращаемой функции с setTimeout, тогда мы его сможем перезаписывать
   let timeoutId;
@@ -127,6 +128,6 @@ function debounce (callback, timeoutDelay = 500) {
     // Таким образом цикл «поставить таймаут - удалить таймаут» будет выполняться,
     // пока действие совершается чаще, чем переданная задержка timeoutDelay
   };
-}
+};
 
 export {checkLineLength, isEscapeKey, showAlert, createSuccessMessage, createErrorMessage, debounce, getRandomArrayElement};
