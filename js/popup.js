@@ -59,7 +59,7 @@ const openPopup = (picture, pictureData) => {
 
         if (k === numberOfGroupOfN && numberOfLastGroup === 0 ) {
           bigPictureSection.querySelector('.social__comments-loader').classList.add('hidden');
-          bigPictureSection.querySelector('.social__comments-loader').removeEventListener('click', addMoreComments);
+          bigPictureSection.querySelector('.social__comments-loader').removeEventListener('click', onLoadButtonClick);
         }
 
 
@@ -73,7 +73,7 @@ const openPopup = (picture, pictureData) => {
         updateNumberOfCommentsLoaded(numberOfCommentsLoaded, (k-1)*NUMBER_OF_COMMENTS_TO_LOAD + numberOfLastGroup);
 
         bigPictureSection.querySelector('.social__comments-loader').classList.add('hidden');
-        bigPictureSection.querySelector('.social__comments-loader').removeEventListener('click', addMoreComments);
+        bigPictureSection.querySelector('.social__comments-loader').removeEventListener('click', onLoadButtonClick);
       }
     };
 
@@ -85,7 +85,7 @@ const openPopup = (picture, pictureData) => {
         commentsList[i].classList.add('hidden');
       }
 
-      bigPictureSection.querySelector('.social__comments-loader').addEventListener('click', addMoreComments);
+      bigPictureSection.querySelector('.social__comments-loader').addEventListener('click', onLoadButtonClick);
     } else {
       updateNumberOfCommentsLoaded(numberOfCommentsLoaded, commentsList.length);
 
@@ -104,18 +104,25 @@ const openPopup = (picture, pictureData) => {
     function closePopup () {
       bigPictureSection.classList.add('hidden');
       document.body.classList.remove('modal-open');
-      closeButton.removeEventListener('click', closePopup);
+      closeButton.removeEventListener('click', onCloseButtonClick);
       document.removeEventListener('keydown', onPopupEscKeydown);
-      bigPictureSection.querySelector('.social__comments-loader').removeEventListener('click', addMoreComments);
+      bigPictureSection.querySelector('.social__comments-loader').removeEventListener('click', onLoadButtonClick);
       bigPictureSection.querySelector('.social__comments-loader').classList.remove('hidden');
     }
 
 
-    closeButton.addEventListener('click', closePopup);
+    closeButton.addEventListener('click', onCloseButtonClick);
     document.addEventListener('keydown', onPopupEscKeydown);
 
+    function onCloseButtonClick () {
+      closePopup();
+    }
 
+    function onLoadButtonClick () {
+      addMoreComments();
+    }
   });
 };
+
 
 export {openPopup};

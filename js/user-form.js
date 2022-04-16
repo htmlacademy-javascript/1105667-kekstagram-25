@@ -54,18 +54,20 @@ const openUploadForm = () => {
   scaleControl.value = '100%';
   // Добавляем обработчики
   document.addEventListener('keydown', onUploadFormEscKeydown);
-  uploadFormCloseElement.addEventListener('click', closeUploadForm);
+  uploadFormCloseElement.addEventListener('click', onCloseElementClick);
 
   hashtagsInput.addEventListener('focusin', onInputFocusin);
   hashtagsInput.addEventListener('focusout', onInputFocusout);
 
   descriptionInput.addEventListener('focusin', onInputFocusin);
   descriptionInput.addEventListener('focusout', onInputFocusout);
-  // Добавляем обработчики кнопок масштаба
-  scaleSmallerElement.addEventListener('click', makeScaleSmaller);
-  scaleBiggerElement.addEventListener('click', makeScaleBigger);
 
-  uploadFile.removeEventListener('change', openUploadForm);
+  filterList.addEventListener('click', onFilterListClick);
+  // Добавляем обработчики кнопок масштаба
+  scaleSmallerElement.addEventListener('click', onScaleSmallerElementClick);
+  scaleBiggerElement.addEventListener('click', onScaleBiggerElementClick);
+
+  uploadFile.removeEventListener('change', onUploadInputChange);
 
 };
 
@@ -76,26 +78,46 @@ function closeUploadForm () {
   uploadFile.value = '';
   hashtagsInput.value = '';
   descriptionInput.value = '';
+
+  document.querySelector('.effects__radio').checked = true;
+
+  const errorsToRemove = document.querySelectorAll('.pristine-error');
+  for (let i = 0; i < errorsToRemove.length; i++) {
+    errorsToRemove[i].innerHTML='';
+  }
+
   // Убираем обработчики
   document.removeEventListener('keydown', onUploadFormEscKeydown);
-  uploadFormCloseElement.removeEventListener('click', closeUploadForm);
+  uploadFormCloseElement.removeEventListener('click', onCloseElementClick);
   hashtagsInput.removeEventListener('focusin', onInputFocusin);
   hashtagsInput.removeEventListener('focusout', onInputFocusout);
   descriptionInput.removeEventListener('focusin', onInputFocusin);
   descriptionInput.removeEventListener('focusout', onInputFocusout);
-  filterList.removeEventListener('click', updateEffectSlider);
+  filterList.removeEventListener('click', onFilterListClick);
   // Убираем обработчики с кнопок масштаба
-  scaleSmallerElement.removeEventListener('click', makeScaleSmaller);
-  scaleBiggerElement.removeEventListener('click', makeScaleBigger);
+  scaleSmallerElement.removeEventListener('click', onScaleSmallerElementClick);
+  scaleBiggerElement.removeEventListener('click', onScaleBiggerElementClick);
   // Сброс стиля изображения
   picturePreview.style.transform = '';
 
-  uploadFile.addEventListener('change', openUploadForm);
+  uploadFile.addEventListener('change', onUploadInputChange);
 
 
 }
 
-uploadFile.addEventListener('change', openUploadForm);
+function onUploadInputChange () {
+  openUploadForm();
+}
+
+function onCloseElementClick () {
+  closeUploadForm();
+}
+
+function onFilterListClick (evt) {
+  updateEffectSlider(evt);
+}
+
+uploadFile.addEventListener('change', onUploadInputChange);
 
 // Функции масштабирования изображения
 function makeScaleSmaller () {
@@ -110,6 +132,14 @@ function makeScaleBigger () {
     scaleControl.value = `${Number(scaleControl.value.slice(0,-1)) + 25  }%`;
     picturePreview.style.transform = `scale(${ scaleControl.value.slice(0,-1)/100})`;
   }
+}
+
+function onScaleSmallerElementClick () {
+  makeScaleSmaller();
+}
+
+function onScaleBiggerElementClick () {
+  makeScaleBigger();
 }
 
 // Валидация

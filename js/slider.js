@@ -68,9 +68,6 @@ noUiSlider.create(sliderElement, {
   },
 });
 
-
-filterList.addEventListener('click', updateEffectSlider);
-
 function updateEffectSlider (evt) {
   if (evt.target.matches('input[type="radio"]')) {
     const effectValue = evt.target.value;

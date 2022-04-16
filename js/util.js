@@ -68,7 +68,7 @@ const createSuccessMessage = () => {
   body.appendChild(succesElement);
 
   succesElement.classList.remove('hidden');
-  successButton.addEventListener('click', closeMessage);
+  successButton.addEventListener('click', onSuccessCloseButtonClick);
   document.addEventListener('keydown', onSuccessMessageEscKeydown);
   document.addEventListener('click', onSuccessMessageClickOnRandomArea);
 };
@@ -93,22 +93,29 @@ const createErrorMessage = () => {
 
   errorElement.classList.remove('hidden');
   errorElement.style.zIndex = '3';
-  errorButton.addEventListener('click', closeMessage);
+  errorButton.addEventListener('click', onErrorCloseButtonClick);
   document.addEventListener('keydown', onErrorMessageEscKeydown);
   document.addEventListener('click', onErrorMessageClickOnRandomArea);
 };
 
 function closeMessage () {
   succesElement.classList.add('hidden');
-  successButton.removeEventListener('click', closeMessage);
+  successButton.removeEventListener('click', onSuccessCloseButtonClick);
   errorElement.classList.add('hidden');
-  errorButton.removeEventListener('click', closeMessage);
+  errorButton.removeEventListener('click', onErrorCloseButtonClick);
   document.removeEventListener('keydown', onSuccessMessageEscKeydown);
   document.removeEventListener('click', onSuccessMessageClickOnRandomArea);
   document.removeEventListener('keydown', onErrorMessageEscKeydown);
   document.removeEventListener('click', onErrorMessageClickOnRandomArea);
 }
 
+function onErrorCloseButtonClick () {
+  closeMessage();
+}
+
+function onSuccessCloseButtonClick () {
+  closeMessage();
+}
 // Функция взята из интернета и доработана
 // Источник - https://www.freecodecamp.org/news/javascript-debounce-example
 
