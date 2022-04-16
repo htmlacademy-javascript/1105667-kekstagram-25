@@ -1,7 +1,10 @@
 import {isEscapeKey, checkLineLength} from './util.js';
 import './slider.js';
 import {sendData} from './api.js';
-import {filterElements, updateEffectSlider} from './slider.js';
+import {filterList, updateEffectSlider} from './slider.js';
+
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+
 const uploadForm = document.querySelector('#upload-select-image');
 const uploadFile = uploadForm.querySelector('#upload-file');
 const uploadFormCloseElement = uploadForm.querySelector('#upload-cancel');
@@ -9,12 +12,12 @@ const uploadFormCloseElement = uploadForm.querySelector('#upload-cancel');
 const hashtagsInput = uploadForm.querySelector('[name="hashtags"]');
 const descriptionInput = uploadForm.querySelector('[name="description"]');
 
-const scaleSmaller = document.querySelector('.scale__control--smaller');
-const scaleBigger = document.querySelector('.scale__control--bigger');
+const scaleSmallerElement = document.querySelector('.scale__control--smaller');
+const scaleBiggerElement = document.querySelector('.scale__control--bigger');
 const scaleControl = document.querySelector('.scale__control--value');
 const submitButton = document.querySelector('.img-upload__submit');
 const picturePreview = document.querySelector('.img-upload__preview').querySelector('img');
-const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+
 
 const onUploadFormEscKeydown = (evt) => {
   if ((isEscapeKey(evt) && !document.querySelector('.error')) || (isEscapeKey(evt) && document.querySelector('.error.hidden'))) {
@@ -59,8 +62,10 @@ const openUploadForm = () => {
   descriptionInput.addEventListener('focusin', onInputFocusin);
   descriptionInput.addEventListener('focusout', onInputFocusout);
   // Добавляем обработчики кнопок масштаба
-  scaleSmaller.addEventListener('click', makeScaleSmaller);
-  scaleBigger.addEventListener('click', makeScaleBigger);
+  scaleSmallerElement.addEventListener('click', makeScaleSmaller);
+  scaleBiggerElement.addEventListener('click', makeScaleBigger);
+
+  uploadFile.removeEventListener('change', openUploadForm);
 
 };
 
@@ -78,12 +83,14 @@ function closeUploadForm () {
   hashtagsInput.removeEventListener('focusout', onInputFocusout);
   descriptionInput.removeEventListener('focusin', onInputFocusin);
   descriptionInput.removeEventListener('focusout', onInputFocusout);
-  filterElements.removeEventListener('click', updateEffectSlider);
+  filterList.removeEventListener('click', updateEffectSlider);
   // Убираем обработчики с кнопок масштаба
-  scaleSmaller.removeEventListener('click', makeScaleSmaller);
-  scaleBigger.removeEventListener('click', makeScaleBigger);
+  scaleSmallerElement.removeEventListener('click', makeScaleSmaller);
+  scaleBiggerElement.removeEventListener('click', makeScaleBigger);
   // Сброс стиля изображения
   picturePreview.style.transform = '';
+
+  uploadFile.addEventListener('change', openUploadForm);
 
 
 }
@@ -180,7 +187,6 @@ const setUserFormSubmit = (onSuccess) => {
         },
         () => {
           unblockSubmitButton();
-          // document.querySelector('.img-upload__overlay').classList.add('hidden');
         },
         new FormData(evt.target),
       );
