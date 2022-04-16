@@ -1,4 +1,5 @@
 const MAX_COMMENT_LENGTH = 140;
+const ALERT_SHOW_TIME = 5000;
 const checkLineLength = (text) => text.length <= MAX_COMMENT_LENGTH;
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
@@ -17,7 +18,6 @@ const getRandomNumber = (min, max) => {
 const getRandomArrayElement = (elements) => elements[getRandomNumber(0, elements.length - 1)];
 
 
-const ALERT_SHOW_TIME = 5000;
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
   alertContainer.style.zIndex = 100;

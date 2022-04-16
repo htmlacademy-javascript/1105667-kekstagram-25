@@ -1,6 +1,6 @@
 const sliderElement = document.querySelector('.effect-level__slider');
 const valueElement = document.querySelector('.effect-level__value');
-const filterElements = document.querySelector('.effects__list');
+const filterList = document.querySelector('.effects__list');
 const picturePreview = document.querySelector('.img-upload__preview').querySelector('img');
 
 const effects = {
@@ -69,7 +69,7 @@ noUiSlider.create(sliderElement, {
 });
 
 
-filterElements.addEventListener('click', updateEffectSlider);
+filterList.addEventListener('click', updateEffectSlider);
 
 function updateEffectSlider (evt) {
   if (evt.target.matches('input[type="radio"]')) {
@@ -127,5 +127,5 @@ sliderElement.noUiSlider.on('update', () => {
   }
 });
 
-export {filterElements, updateEffectSlider};
+export {filterList, updateEffectSlider};
 

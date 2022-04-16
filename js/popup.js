@@ -1,6 +1,6 @@
 import {isEscapeKey} from './util.js';
-const bigPictureSection = document.querySelector('.big-picture');
 const NUMBER_OF_COMMENTS_TO_LOAD = 5;
+const bigPictureSection = document.querySelector('.big-picture');
 
 const updateNumberOfCommentsLoaded = (totalCommentsElement, loadedCommentsElement) => {
   bigPictureSection.querySelector('.social__comment-count').innerHTML = '';
@@ -9,13 +9,13 @@ const updateNumberOfCommentsLoaded = (totalCommentsElement, loadedCommentsElemen
   bigPictureSection.querySelector('.social__comment-count').prepend(`${loadedCommentsElement } из `);
 };
 
-const openPopup = (picture, photoMock) => {
+const openPopup = (picture, pictureData) => {
   picture.addEventListener('click', () => {
     bigPictureSection.classList.remove('hidden');
-    bigPictureSection.querySelector('.big-picture__img').querySelector('img').src = photoMock.url;
-    bigPictureSection.querySelector('.likes-count').textContent = photoMock.likes;
-    bigPictureSection.querySelector('.comments-count').textContent = photoMock.comments.length;
-    bigPictureSection.querySelector('.social__caption').textContent = photoMock.description;
+    bigPictureSection.querySelector('.big-picture__img').querySelector('img').src = pictureData.url;
+    bigPictureSection.querySelector('.likes-count').textContent = pictureData.likes;
+    bigPictureSection.querySelector('.comments-count').textContent = pictureData.comments.length;
+    bigPictureSection.querySelector('.social__caption').textContent = pictureData.description;
     document.body.classList.add('modal-open');
 
     // Вставка комментариев
@@ -30,12 +30,12 @@ const openPopup = (picture, photoMock) => {
       return comment;
     };
 
-    for (let i = 0; i < photoMock.comments.length; i++) {
-      const singleComment = createComment(photoMock.comments[i]);
+    for (let i = 0; i < pictureData.comments.length; i++) {
+      const singleComment = createComment(pictureData.comments[i]);
       bigPictureSection.querySelector('.social__comments').appendChild(singleComment);
     }
 
-    const allCommentsList = bigPictureSection.querySelectorAll('.social__comment');
+    const commentsList = bigPictureSection.querySelectorAll('.social__comment');
     const numberOfCommentsLoaded = bigPictureSection.querySelector('.comments-count');
 
 
@@ -44,21 +44,22 @@ const openPopup = (picture, photoMock) => {
 
     // Вычисляем число групп по N и остаток
 
-    const numberOfGroupOfN = Math.floor(allCommentsList.length / NUMBER_OF_COMMENTS_TO_LOAD);
-    const numberOfLastGroup = allCommentsList.length % NUMBER_OF_COMMENTS_TO_LOAD;
+    const numberOfGroupOfN = Math.floor(commentsList.length / NUMBER_OF_COMMENTS_TO_LOAD);
+    const numberOfLastGroup = commentsList.length % NUMBER_OF_COMMENTS_TO_LOAD;
     let k = 2;
 
 
     const addMoreComments = () => {
       if (k <= numberOfGroupOfN) {
         for (let i = (k-1)*NUMBER_OF_COMMENTS_TO_LOAD; i < k*NUMBER_OF_COMMENTS_TO_LOAD; i++) {
-          allCommentsList[i].classList.remove('hidden');
+          commentsList[i].classList.remove('hidden');
         }
 
         updateNumberOfCommentsLoaded(numberOfCommentsLoaded, k*NUMBER_OF_COMMENTS_TO_LOAD);
 
         if (k === numberOfGroupOfN && numberOfLastGroup === 0 ) {
           bigPictureSection.querySelector('.social__comments-loader').classList.add('hidden');
+          bigPictureSection.querySelector('.social__comments-loader').removeEventListener('click', addMoreComments);
         }
 
 
@@ -67,25 +68,26 @@ const openPopup = (picture, photoMock) => {
       } else {
 
         for (let i = (k-1)*NUMBER_OF_COMMENTS_TO_LOAD; i < (k-1)*NUMBER_OF_COMMENTS_TO_LOAD + numberOfLastGroup; i++) {
-          allCommentsList[i].classList.remove('hidden');
+          commentsList[i].classList.remove('hidden');
         }
         updateNumberOfCommentsLoaded(numberOfCommentsLoaded, (k-1)*NUMBER_OF_COMMENTS_TO_LOAD + numberOfLastGroup);
 
         bigPictureSection.querySelector('.social__comments-loader').classList.add('hidden');
+        bigPictureSection.querySelector('.social__comments-loader').removeEventListener('click', addMoreComments);
       }
     };
 
 
-    if (allCommentsList.length >= NUMBER_OF_COMMENTS_TO_LOAD) {
+    if (commentsList.length >= NUMBER_OF_COMMENTS_TO_LOAD) {
 
       // Скрываем комментарии начиная с Nго
-      for (let i = NUMBER_OF_COMMENTS_TO_LOAD; i < allCommentsList.length; i++) {
-        allCommentsList[i].classList.add('hidden');
+      for (let i = NUMBER_OF_COMMENTS_TO_LOAD; i < commentsList.length; i++) {
+        commentsList[i].classList.add('hidden');
       }
 
       bigPictureSection.querySelector('.social__comments-loader').addEventListener('click', addMoreComments);
     } else {
-      updateNumberOfCommentsLoaded(numberOfCommentsLoaded, allCommentsList.length);
+      updateNumberOfCommentsLoaded(numberOfCommentsLoaded, commentsList.length);
 
       bigPictureSection.querySelector('.social__comments-loader').classList.add('hidden');
     }
@@ -110,8 +112,6 @@ const openPopup = (picture, photoMock) => {
 
 
     closeButton.addEventListener('click', closePopup);
-
-
     document.addEventListener('keydown', onPopupEscKeydown);
 
 
