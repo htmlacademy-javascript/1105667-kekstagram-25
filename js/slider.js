@@ -2,7 +2,7 @@ const sliderElement = document.querySelector('.effect-level__slider');
 const valueElement = document.querySelector('.effect-level__value');
 const filterList = document.querySelector('.effects__list');
 const picturePreview = document.querySelector('.img-upload__preview').querySelector('img');
-
+const sliderFrame = document.querySelector('.img-upload__effect-level');
 const effects = {
   chrome : {
     min: 0,
@@ -73,9 +73,9 @@ function updateEffectSlider (evt) {
     const effectValue = evt.target.value;
     updateSlider(effects[effectValue].min, effects[effectValue].max, effects[effectValue].start, effects[effectValue].step);
     if (effectValue === 'none') {
-      sliderElement.classList.add('hidden');
+      sliderFrame.classList.add('hidden');
     } else {
-      sliderElement.classList.remove('hidden');
+      sliderFrame.classList.remove('hidden');
     }
   }
 }
