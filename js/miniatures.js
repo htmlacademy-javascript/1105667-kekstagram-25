@@ -1,4 +1,4 @@
-import {openPopup} from './popup.js';
+import {initPopup} from './popup.js';
 import {getRandomArrayElement} from './util.js';
 
 const picturesSection = document.querySelector('.pictures');
@@ -31,23 +31,23 @@ const renderPicturesList = (photos) => {
   const pictures = document.querySelectorAll('.picture');
 
   for (let i = 0; i < pictures.length; i++) {
-    openPopup(pictures[i], photos[i]);
+    initPopup(pictures[i], photos[i]);
   }
 };
 
 // массив 10 случайных фотографий
 const getRandomPictures = (pictures) => {
-  const picturesRandom = [];
+  const randomPictures = [];
 
   for (let i = 0; i < 10; i++) {
     let randomElement = getRandomArrayElement(pictures);
 
-    while (picturesRandom.includes(randomElement)) {
+    while (randomPictures.includes(randomElement)) {
       randomElement = getRandomArrayElement(pictures);
     }
-    picturesRandom.push(randomElement);
+    randomPictures.push(randomElement);
   }
-  return picturesRandom;
+  return randomPictures;
 };
 
 const drawPictures = (evt, pictures) => {

@@ -4,6 +4,11 @@ import {sendData} from './api.js';
 import {filterList, updateEffectSlider} from './slider.js';
 
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+const HASHTAG_LENGTH_MAX = 20;
+const HASHTAG_QUANTITY_MAX = 5;
+const SCALE_VALUE_MAX = '100%';
+const SCALE_VALUE_MIN = '25%';
+const SCALE_VALUE_STEP = 25;
 
 const uploadForm = document.querySelector('#upload-select-image');
 const uploadFile = uploadForm.querySelector('#upload-file');
@@ -36,7 +41,7 @@ const onInputFocusin = () => {
 const openUploadForm = () => {
   document.querySelector('.img-upload__overlay').classList.remove('hidden');
   document.body.classList.add('modal-open');
-  document.querySelector('.effect-level__slider').classList.add('hidden');
+  document.querySelector('.img-upload__effect-level').classList.add('hidden');
 
   // Замена изображения
   const file = uploadFile.files[0];
@@ -51,7 +56,7 @@ const openUploadForm = () => {
   picturePreview.removeAttribute('style');
   picturePreview.removeAttribute('class');
   // Масштаб изображения по умолчанию
-  scaleControl.value = '100%';
+  scaleControl.value = SCALE_VALUE_MAX;
   // Добавляем обработчики
   document.addEventListener('keydown', onUploadFormEscKeydown);
   uploadFormCloseElement.addEventListener('click', onCloseElementClick);
@@ -121,15 +126,15 @@ uploadFile.addEventListener('change', onUploadInputChange);
 
 // Функции масштабирования изображения
 function makeScaleSmaller () {
-  if (scaleControl.value !== '25%') {
-    scaleControl.value = `${Number(scaleControl.value.slice(0,-1)) - 25  }%`;
+  if (scaleControl.value !== SCALE_VALUE_MIN) {
+    scaleControl.value = `${Number(scaleControl.value.slice(0,-1)) - SCALE_VALUE_STEP  }%`;
     picturePreview.style.transform = `scale(${ scaleControl.value.slice(0,-1)/100})`;
   }
 }
 
 function makeScaleBigger () {
-  if (scaleControl.value !== '100%') {
-    scaleControl.value = `${Number(scaleControl.value.slice(0,-1)) + 25  }%`;
+  if (scaleControl.value !== SCALE_VALUE_MAX) {
+    scaleControl.value = `${Number(scaleControl.value.slice(0,-1)) + SCALE_VALUE_STEP  }%`;
     picturePreview.style.transform = `scale(${ scaleControl.value.slice(0,-1)/100})`;
   }
 }
@@ -154,21 +159,46 @@ const pristine = new Pristine(uploadForm, {
 
 pristine.addValidator(descriptionInput, checkLineLength,'- длина комментария не может составлять больше 140 символов;');
 pristine.addValidator(hashtagsInput, checkHashtags, getHashtagsErrorMessage);
+let errorMessageText = '';
 
 function checkHashtags () {
+  errorMessageText = '';
   if (hashtagsInput.value === '') {
     return true;
   }
   const userHashtags = hashtagsInput.value.split(' ');
   const userHashtagsLowerCase = userHashtags.map((element) => element.toLowerCase());
 
-  return checkHashtagsNotation(userHashtags) && checkHashtagsQuantity(userHashtags) && checkHashtagsUniqueness(userHashtagsLowerCase);
+  const hashtagsNotationCheckResult = checkHashtagsNotation(userHashtags);
+  const hashtagsQuantityCheckResult = checkHashtagsQuantity(userHashtags);
+  const hashtagsUniquenessCheckResult = checkHashtagsUniqueness(userHashtagsLowerCase);
+
+  return hashtagsNotationCheckResult && hashtagsQuantityCheckResult && hashtagsUniquenessCheckResult;
 }
 
 function checkHashtagsNotation (hashtags) {
   const re = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
   for (let i = 0; i < hashtags.length; i++) {
     if (!re.test(hashtags[i])) {
+
+      if (hashtags[i].length > HASHTAG_LENGTH_MAX) {
+        errorMessageText += '<p>&mdash; максимальная длина одного хэш-тега 20 символов, включая решётку;</p>';
+        return;
+      }
+
+      if (hashtags[i] === '#') {
+        errorMessageText += '<p>&mdash; хеш-тег не может состоять только из одной решётки;</p>';
+        return;
+      }
+
+      if (!hashtags[i].includes('#')) {
+        errorMessageText += '<p>&mdash; хэш-тег начинается с символа # (решётка);</p>';
+        return;
+      }
+
+      if (errorMessageText === '') {
+        errorMessageText += '<p>&mdash; строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.; </p>';
+      }
       return false;
     }
   }
@@ -176,18 +206,25 @@ function checkHashtagsNotation (hashtags) {
 }
 
 function checkHashtagsQuantity (hashtags) {
-  return hashtags.length <=5;
+  if (hashtags.length > HASHTAG_QUANTITY_MAX) {
+    errorMessageText += '<p>&mdash; нельзя указать больше пяти хэш-тегов;</p>';
+    return false;
+  }
+  return true;
 }
 
 
 function checkHashtagsUniqueness (hashtags) {
   const uniqueHashtags = new Set(hashtags);
-  return hashtags.length === uniqueHashtags.size;
+  if (hashtags.length === uniqueHashtags.size) {
+    return true;
+  }
+  errorMessageText += '<p>&mdash; хэш-теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом;</p><p>&mdash; один и тот же хэш-тег не может быть использован дважды;</p>';
+  return false;
 }
 
 function getHashtagsErrorMessage () {
-  return '<p>&mdash; хэш-тег начинается с символа # (решётка);</p><p>&mdash; строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.; </p><p>&mdash; хеш-тег не может состоять только из одной решётки;</p><p>&mdash; максимальная длина одного хэш-тега 20 символов, включая решётку;</p><p>&mdash; хэш-теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом;</p><p>&mdash; хэш-теги разделяются пробелами;</p><p>&mdash; один и тот же хэш-тег не может быть использован дважды;</p><p>&mdash; нельзя указать больше пяти хэш-тегов;</p>';
-
+  return errorMessageText;
 }
 
 // Блокировка и разблокировка кнопки
